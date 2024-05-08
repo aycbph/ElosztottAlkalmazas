@@ -1,0 +1,109 @@
+
+package Csigaverseny6;
+
+import java.util.InputMismatchException;
+import java.util.Random;
+import java.util.Scanner;
+
+import java.util.InputMismatchException;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Csigaverseny2 {
+    private int distance;
+    private int rounds;
+    private int superBoostChance;
+    private Random random;
+    private Scanner scanner;
+
+    public Csigaverseny2() {
+        this.random = new Random();
+        this.scanner = new Scanner(System.in);
+        this.rounds = 5;
+        this.superBoostChance = 20;
+    }
+
+    public void startRace() {
+        System.out.println("Üdvözöllek a csigaversenyen!");
+        System.out.println("Add meg a verseny távolságát (egész szám):");
+        this.distance = scanner.nextInt();
+        scanner.nextLine(); // Buffer ürítése
+
+        // Fogadás fogadása
+        String userBetColor = null;
+        int userBetAmount = 0;
+        boolean validBet = false;
+        while (!validBet) {
+            try {
+                System.out.println("Fogadj egy csigára (piros, zöld vagy kék) és írd be a tipp összegét:");
+                userBetColor = scanner.nextLine();
+                System.out.println("Mennyit fogadsz rá?");
+                userBetAmount = scanner.nextInt();
+                if (userBetAmount <= 0) {
+                    throw new InputMismatchException();
+                }
+                validBet = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Érvénytelen fogadás! Kérlek adj meg egy pozitív egész számot.");
+                scanner.nextLine(); // Buffer ürítése
+            }
+        }
+        scanner.nextLine(); // Buffer ürítése
+
+        for (int i = 0; i < rounds; i++) {
+            System.out.println("\n" + (i + 1) + ". kör");
+
+            int redSpeed = random.nextInt(3) + 1;
+            int greenSpeed = random.nextInt(3) + 1;
+            int blueSpeed = random.nextInt(3) + 1;
+
+            boolean superBoost = random.nextInt(100) < superBoostChance;
+
+            if (superBoost) {
+                System.out.println("Super gyorsító kiválasztva! A csigák sebessége megduplázódik!");
+                redSpeed *= 2;
+                greenSpeed *= 2;
+                blueSpeed *= 2;
+            }
+
+            int redDistance = redSpeed * 10;
+            int greenDistance = greenSpeed * 10;
+            int blueDistance = blueSpeed * 10;
+
+            System.out.println("Piros csiga távolsága: " + redDistance);
+            System.out.println("Zöld csiga távolsága: " + greenDistance);
+            System.out.println("Kék csiga távolsága: " + blueDistance);
+
+            String winner = "nem volt";
+            if (redDistance >= distance && redDistance >= greenDistance && redDistance >= blueDistance) {
+                winner = "piros";
+            } else if (greenDistance >= distance && greenDistance >= redDistance && greenDistance >= blueDistance) {
+                winner = "zöld";
+            } else if (blueDistance >= distance && blueDistance >= redDistance && blueDistance >= greenDistance) {
+                winner = "kék";
+            }
+
+            if (!winner.equals("nem volt")) {
+                System.out.println("A verseny nyertese a(z) " + winner + " csiga!");
+                // Fogadó nyert, kiírjuk a nyereményt
+                if (winner.equals(userBetColor)) {
+                    int winnings = userBetAmount * 3;
+                    System.out.println("Ön nyert! Nyereménye: " + winnings);
+                }
+            } else {
+                System.out.println("A verseny döntetlen lett.");
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Csigaverseny2 csigaverseny = new Csigaverseny2();
+        csigaverseny.startRace();
+    }
+}
